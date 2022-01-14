@@ -6,10 +6,10 @@ import org.springframework.core.convert.converter.Converter;
 
 import java.util.Objects;
 
-public class CustomerToDtoConverter implements Converter<CustomerDto, Customer> {
+public class CustomerToDtoConverter implements Converter<Customer, CustomerDto> {
     @Override
-    public Customer convert(CustomerDto source) {
+    public CustomerDto convert(Customer source) {
         Objects.requireNonNull(source);
-        return new Customer(source.id(), source.name());
+        return new CustomerDto(source.id(), source.name());
     }
 }

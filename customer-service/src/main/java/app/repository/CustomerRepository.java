@@ -2,7 +2,7 @@ package app.repository;
 
 
 import app.model.Customer;
-import org.springframework.data.keyvalue.repository.KeyValueRepository;
+import org.springframework.data.repository.CrudRepository;
 
-public interface CustomerRepository extends KeyValueRepository<Customer, Integer> {
+public interface CustomerRepository extends CrudRepository<Customer, String> {
 }

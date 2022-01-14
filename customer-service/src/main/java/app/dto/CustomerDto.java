@@ -1,7 +1,7 @@
 package app.dto;
 
 public record CustomerDto(
-        Integer id,
+        String id,
         String name
 ) {
 }

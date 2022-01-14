@@ -2,27 +2,63 @@ package app.controller;
 
 import app.dto.CustomerCreateDto;
 import app.dto.CustomerDto;
-import org.springframework.http.HttpStatus;
+import app.dto.converter.CustomerToDtoConverter;
+import app.model.Customer;
+import app.repository.CustomerRepository;
+import org.springframework.data.keyvalue.core.IterableConverter;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriBuilder;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping(CustomerController.PATH)
 public class CustomerController {
+    public static final String PATH = "/customer";
+
+    private final CustomerRepository customerRepository;
+    private final CustomerToDtoConverter customerToDtoConverter;
+
+    public CustomerController(CustomerRepository customerRepository,
+                              CustomerToDtoConverter customerToDtoConverter) {
+        this.customerRepository = customerRepository;
+        this.customerToDtoConverter = customerToDtoConverter;
+    }
 
     @GetMapping
-    ResponseEntity<CustomerDto> getAll() {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build(); // TODO
+    ResponseEntity<List<CustomerDto>> getAll() {
+        var customerDtoList = IterableConverter.toList(customerRepository.findAll())
+                .stream()
+                .map(customerToDtoConverter::convert)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(customerDtoList);
     }
 
 
     @GetMapping("/{id}")
-    ResponseEntity<CustomerDto> getOne(Integer id) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build(); // TODO
+    ResponseEntity<CustomerDto> getOne(@PathVariable String id) {
+        var customer = customerRepository.findById(id);
+        if (customer.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(customerToDtoConverter.convert(customer.get()));
     }
 
     @PostMapping
-    ResponseEntity<CustomerDto> create(@RequestBody CustomerCreateDto customerCreateDto) {
-        return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build(); // TODO
+    ResponseEntity<CustomerDto> create(@RequestBody CustomerCreateDto customerCreateDto, UriBuilder uriBuilder) {
+        var saved = customerRepository.save(new Customer(customerCreateDto.name()));
+
+        return ResponseEntity.created(uriBuilder.path(PATH + "/" + saved.id()).build())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(customerToDtoConverter.convert(saved));
     }
 }
