@@ -1,0 +1,8 @@
+services:
+  java-service:
+    build: .
+    ports:
+      - "8080:8080"
+  redis:
+    image: 'redis'
+    container_name: redis-customer-db

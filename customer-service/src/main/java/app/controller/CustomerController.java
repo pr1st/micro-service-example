@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,10 +55,10 @@ public class CustomerController {
     }
 
     @PostMapping
-    ResponseEntity<CustomerDto> create(@RequestBody CustomerCreateDto customerCreateDto, UriBuilder uriBuilder) {
+    ResponseEntity<CustomerDto> create(@RequestBody CustomerCreateDto customerCreateDto, UriComponentsBuilder uriBuilder) {
         var saved = customerRepository.save(new Customer(customerCreateDto.name()));
 
-        return ResponseEntity.created(uriBuilder.path(PATH + "/" + saved.id()).build())
+        return ResponseEntity.created(uriBuilder.path(PATH + "/" + saved.id()).buildAndExpand().toUri())
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(customerToDtoConverter.convert(saved));
     }
