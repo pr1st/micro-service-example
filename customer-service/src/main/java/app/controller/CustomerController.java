@@ -9,7 +9,6 @@ import org.springframework.data.keyvalue.core.IterableConverter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(CustomerController.PATH)
 public class CustomerController {
-    public static final String PATH = "/customer";
+    public static final String PATH = "/api/v1/users";
 
     private final CustomerRepository customerRepository;
     private final CustomerToDtoConverter customerToDtoConverter;
