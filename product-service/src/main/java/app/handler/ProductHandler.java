@@ -33,14 +33,23 @@ public class ProductHandler {
 
     public Mono<ServerResponse> getProductById(ServerRequest request) {
         var id = request.pathVariable("id");
-        return ServerResponse.ok()
+
+        Function<Product, Mono<ServerResponse>> serverMonoResponse = (Product p) -> ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(productRepository.findById(id).map(converterToDto::convert), ProductDto.class);
+                .bodyValue(converterToDto.convert(p));
+
+        return productRepository.findById(id)
+                .single()
+                .flatMap(serverMonoResponse)
+                .onErrorResume(t -> {
+                    System.err.println(t.getMessage());
+                    return ServerResponse.notFound().build();
+                });
     }
 
     public Mono<ServerResponse> createProduct(ServerRequest request) {
         // sadge code :( (hardly readable, as do not found anything better)
-        var body = request.body(BodyExtractors.toMono(ProductCreateDto.class));
+        var body = request.body(BodyExtractors.toMono(ProductCreateDto.class)).single();
         var created = body.flatMap(dto -> productRepository.create(dto.title()));
 
         Function<Product, Mono<ServerResponse>> serverMonoResponse = (Product p) ->

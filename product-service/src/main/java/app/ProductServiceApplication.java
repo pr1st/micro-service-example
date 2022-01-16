@@ -22,36 +22,37 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 @SpringBootApplication
 public class ProductServiceApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(ProductServiceApplication.class, args);
-	}
-	@Bean
-	public RouterFunction<ServerResponse> orderRouter(ProductHandler productHandler) {
-		return route()
-				.nest(path("/api/v1/products").and(accept(APPLICATION_JSON)), builder -> builder
-						.GET("/{id}", productHandler::getProductById)
-						.GET("", productHandler::getAllProducts)
-						.POST("", contentType(APPLICATION_JSON), productHandler::createProduct)
-				).build();
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ProductServiceApplication.class, args);
+    }
 
-	@Bean
-	public ReactiveRedisConnectionFactory redisConnectionFactory(
-			@Value("${redis.hostName}") String hostName,
-			@Value("${redis.port}") int port
-	) {
-		return new LettuceConnectionFactory(hostName, port);
-	}
+    @Bean
+    public RouterFunction<ServerResponse> orderRouter(ProductHandler productHandler) {
+        return route()
+                .nest(path("/api/v1/products").and(accept(APPLICATION_JSON)), builder -> builder
+                        .GET("/{id}", productHandler::getProductById)
+                        .GET("", productHandler::getAllProducts)
+                        .POST("", productHandler::createProduct)
+                ).build();
+    }
 
-	@Bean
-	ReactiveRedisTemplate<String, Product> redisOperations(ReactiveRedisConnectionFactory factory) {
-		Jackson2JsonRedisSerializer<Product> serializer = new Jackson2JsonRedisSerializer<>(Product.class);
+    @Bean
+    public LettuceConnectionFactory reactiveRedisConnectionFactory(
+            @Value("${redis.hostName}") String hostName,
+            @Value("${redis.port}") int port
+    ) {
+        return new LettuceConnectionFactory(hostName, port);
+    }
 
-		RedisSerializationContext.RedisSerializationContextBuilder<String, Product> builder =
-				RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
+    @Bean
+    ReactiveRedisTemplate<String, Product> redisOperations(ReactiveRedisConnectionFactory factory) {
+        Jackson2JsonRedisSerializer<Product> serializer = new Jackson2JsonRedisSerializer<>(Product.class);
 
-		RedisSerializationContext<String, Product> context = builder.value(serializer).build();
+        RedisSerializationContext.RedisSerializationContextBuilder<String, Product> builder =
+                RedisSerializationContext.newSerializationContext(new StringRedisSerializer());
 
-		return new ReactiveRedisTemplate<>(factory, context);
-	}
+        RedisSerializationContext<String, Product> context = builder.value(serializer).build();
+
+        return new ReactiveRedisTemplate<>(factory, context);
+    }
 }
