@@ -2,6 +2,7 @@ package app.controller;
 
 import app.dto.OrderCreateDto;
 import app.dto.converter.OrderToDtoConverter;
+import app.dto.converter.OrderToDtoWithoutCustomerConverter;
 import app.model.Order;
 import app.repository.OrderRepository;
 import org.springframework.http.MediaType;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -17,11 +17,15 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/api/v1/orders")
 public class OrderController {
     private final OrderRepository orderRepository;
-    private final OrderToDtoConverter converter;
+    private final OrderToDtoConverter converterToDto;
+    private final OrderToDtoWithoutCustomerConverter converterWithoutCustomerToDto;
 
-    public OrderController(OrderRepository orderRepository, OrderToDtoConverter converter) {
+    public OrderController(OrderRepository orderRepository,
+                           OrderToDtoConverter converterToDto,
+                           OrderToDtoWithoutCustomerConverter converterWithoutCustomerToDto) {
         this.orderRepository = orderRepository;
-        this.converter = converter;
+        this.converterToDto = converterToDto;
+        this.converterWithoutCustomerToDto = converterWithoutCustomerToDto;
     }
 
     @GetMapping
@@ -29,8 +33,8 @@ public class OrderController {
         if (customerId != null) return getByCustomerId(customerId);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(StreamSupport.stream(orderRepository.findAll().spliterator(), false)
-                        .map(converter::convert)
+                .body(orderRepository.findAll().stream()
+                        .map(converterToDto::convert)
                         .collect(Collectors.toList()));
     }
 
@@ -39,7 +43,7 @@ public class OrderController {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(orderRepository.findOrderByCustomerId(customerId)
                         .stream()
-                        .map(converter::convert)
+                        .map(converterWithoutCustomerToDto::convert)
                         .collect(Collectors.toList()));
     }
 
@@ -50,7 +54,7 @@ public class OrderController {
         if (orderOptional.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(converter.convert(orderOptional.get()));
+                .body(converterToDto.convert(orderOptional.get()));
     }
 
 
@@ -59,6 +63,6 @@ public class OrderController {
         var saved = orderRepository.save(new Order(null, createDto.customerId(), createDto.productId()));
         return ResponseEntity.created(uriBuilder.path("/{id}").buildAndExpand(saved.getId()).toUri())
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(converter.convert(saved));
+                .body(converterToDto.convert(saved));
     }
 }

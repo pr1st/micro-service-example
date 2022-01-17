@@ -9,6 +9,6 @@ import org.springframework.stereotype.Component;
 public class OrderToDtoConverter implements Converter<Order, OrderDto> {
     @Override
     public OrderDto convert(Order source) {
-        return new OrderDto(source.getId(), source.getProductId());
+        return new OrderDto(source.getId(), source.getProductId(), source.getCustomerId());
     }
 }
