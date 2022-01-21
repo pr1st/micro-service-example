@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
+@CrossOrigin({"http://localhost:8080"})
 @RequestMapping("/api/v1/orders")
 public class OrderController {
     private final OrderRepository orderRepository;

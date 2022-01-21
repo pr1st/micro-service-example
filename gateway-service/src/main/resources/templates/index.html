@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Example application</title>
+    <link th:rel="stylesheet" th:href="@{webjars/bootstrap/css/bootstrap.min.css} "/>
+    <link rel="stylesheet" href="./css/index.css"/>
+
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-center fw-light">Example application</h1>
+    <div id="global-buttons" class="btn-group bg-light border mb-2">
+        <a id="reset-highlights" role="button" class="btn btn-outline-primary">Reset highlights</a>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+        <div class="col border">
+            <h3 class="mb-2 text-center">Customers</h3>
+            <a id="add-customer-button" role="button" class="btn btn-success mb-2">Add person</a>
+            <input id="input-customer-name" class="form-control mb-2" type="text" style="height: 48px;"
+                   placeholder="Customer name">
+            <table id="customers-table" class="table table-fixed table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-xs-6">Id</th>
+                    <th class="col-xs-3">Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="col border">
+            <h3 class="mb-2 text-center">Orders</h3>
+            <a id="add-order-button" role="button" class="btn btn-success mb-2 disabled">Add order</a>
+            <p class="bg-info text-center mb-2" style="height: 48px;">Select elements in customer and product tables</p>
+            <table id="orders-table" class="table table-fixed table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-xs-6">Id</th>
+                    <th class="col-xs-3">Customer</th>
+                    <th class="col-xs-3">Product</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <div class="col border">
+            <h3 class="mb-2 text-center">Products</h3>
+            <a id="add-product-button" role="button" class="btn btn-success mb-2">Add product</a>
+            <input id="input-product-name" class="form-control mb-2" type="text" style="height: 48px;"
+                   placeholder="Product name">
+            <table id="products-table" class="table table-fixed table-condensed">
+                <thead>
+                <tr>
+                    <th class="col-xs-6">Id</th>
+                    <th class="col-xs-3">Name</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script src="/js/index.js"></script>
+<script src="/js/customers.js"></script>
+<script src="/js/orders.js"></script>
+<script src="/js/products.js"></script>
+
+
+</body>
+</html>

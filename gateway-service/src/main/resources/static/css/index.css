@@ -1,0 +1,16 @@
+tbody .customer-highlight {
+  background-color: #FF0000;
+}
+
+tbody .product-highlight {
+  background-color: #66FF66;
+}
+
+tbody .order-highlight {
+  background-color: #99CCFF;
+}
+
+/*
+.table tbody tr .highlight {
+  background-color: #ddd;
+}*/

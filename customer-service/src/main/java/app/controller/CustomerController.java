@@ -5,6 +5,7 @@ import app.dto.CustomerDto;
 import app.dto.converter.CustomerToDtoConverter;
 import app.model.Customer;
 import app.repository.CustomerRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.keyvalue.core.IterableConverter;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@CrossOrigin({"http://localhost:8080"})
 @RequestMapping(CustomerController.PATH)
 public class CustomerController {
     public static final String PATH = "/api/v1/users";
