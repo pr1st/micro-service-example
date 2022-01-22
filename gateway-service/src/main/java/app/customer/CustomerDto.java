@@ -1,4 +1,7 @@
 package app.customer;
 
-public class CustomerDto {
+public record CustomerDto(
+        String id,
+        String name
+) {
 }

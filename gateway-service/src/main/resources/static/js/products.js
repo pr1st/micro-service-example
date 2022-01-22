@@ -1,5 +1,5 @@
 var products = []
-var productResourceUrl = "http://localhost:8003/api/v1/products"
+var productResourceUrl = ""
 
 // post create entity request
 function requestCreatingNewProduct(productTitle) {

@@ -1,4 +1,8 @@
 package app.order;
 
-public class OrderDto {
+public record OrderDto(
+        String id,
+        String productId,
+        String customerId
+) {
 }

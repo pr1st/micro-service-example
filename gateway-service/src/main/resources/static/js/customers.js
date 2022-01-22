@@ -1,5 +1,5 @@
 var customers = []
-var customerResourceUrl = "http://localhost:8002/api/v1/users"
+var customerResourceUrl = ""
 
 // post create entity request
 function requestCreatingNewCustomer(customerName) {

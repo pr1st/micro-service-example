@@ -1,4 +1,7 @@
 package app.product;
 
-public class ProductDto {
+public record ProductDto(
+        String id,
+        String title
+) {
 }

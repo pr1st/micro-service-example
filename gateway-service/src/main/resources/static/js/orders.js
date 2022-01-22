@@ -1,6 +1,6 @@
 var orders = []
 
-var orderResourceUrl = "http://localhost:8001/api/v1/orders"
+var orderResourceUrl = ""
 
 var selected = {
     customerId: null,
