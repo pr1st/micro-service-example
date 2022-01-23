@@ -1,0 +1,30 @@
+services:
+  product:
+    host: localhost:8003
+    client-link-host: localhost:8003
+  customer:
+    host: localhost:8002
+    client-link-host: localhost:8002
+  order:
+    host: localhost:8001
+    client-link-host: localhost:8001
+
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          client:
+            RestTemplate: DEBUG
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+services:
+  order:
+    host: order-service:8080
+  customer:
+    host: customer-service:8080
+  product:
+    host: product-service:8080

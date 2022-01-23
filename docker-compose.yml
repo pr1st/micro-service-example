@@ -1,5 +1,14 @@
 version: "3.8"
 services:
+  #gateway
+  gateway:
+    build: ./gateway-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - order-service
+      - customer-service
+      - product-service
   # order
   order-service:
     build: ./order-service

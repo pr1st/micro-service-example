@@ -17,14 +17,18 @@ public class OrderClient {
 
     private final String resourceUrl;
     private final RestTemplate restTemplate;
+    private final String resourceClientUrl;
 
-    public OrderClient(@Value("${services.order.host}") String resourceHost, RestTemplate restTemplate) {
+    public OrderClient(@Value("${services.order.host}") String resourceHost,
+                       @Value("${services.order.client-link-host}") String resourceClientLinkHost,
+                       RestTemplate restTemplate) {
         this.resourceUrl = "http://" + resourceHost + resourcePath;
+        this.resourceClientUrl = "http://" + resourceClientLinkHost + resourcePath;
         this.restTemplate = restTemplate;
     }
 
     public String getResourceUrl() {
-        return resourceUrl;
+        return resourceClientUrl;
     }
 
     public List<OrderDto> findByCustomerId(String customerId) {

@@ -21,6 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -42,7 +44,7 @@ public class GatewayRestController {
     }
 
     @GetMapping
-    public ResponseEntity<?> apiInfo() {
+    public ResponseEntity<?> apiInfo() throws ExecutionException, InterruptedException {
         var links = CollectionModel.empty();
         links.add(linkTo(GatewayRestController.class).withSelfRel());
         links.add(linkTo(methodOn(GatewayRestController.class)
@@ -54,10 +56,18 @@ public class GatewayRestController {
     }
 
     @GetMapping("/v1/orders/")
-    public ResponseEntity<?> customerOrderProductsInfo(@RequestParam("client_id") String clientId) {
-        var customer = customerService.getCustomer(clientId);
-        var orders = orderService.getOrdersFromCustomer(clientId);
-        var products = productService.getProductsForOrders(orders.stream().map(OrderDto::productId).toList());
+    public ResponseEntity<?> customerOrderProductsInfo(@RequestParam("client_id") String clientId) throws ExecutionException, InterruptedException {
+        var customerFuture = customerService.getCustomerAsync(clientId);
+        var ordersFuture = orderService.getOrdersFromCustomerAsync(clientId);
+
+        var productsFuture = ordersFuture.thenComposeAsync(orders ->
+                productService.getProductsForOrdersAsync(orders.stream().map(OrderDto::productId).toList()));
+
+        CompletableFuture.allOf(customerFuture, ordersFuture, productsFuture).get();
+        var customer = customerFuture.get();
+        var orders = ordersFuture.get();
+        var products = productsFuture.get();
+
         var orderInfoList = orders.stream()
                 .map(o -> products.stream()
                         .filter(p -> p.id().equals(o.productId()))

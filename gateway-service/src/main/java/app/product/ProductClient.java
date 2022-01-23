@@ -11,14 +11,18 @@ public class ProductClient {
 
     private final String resourceUrl;
     private final RestTemplate restTemplate;
+    private final String resourceClientUrl;
 
-    public ProductClient(@Value("${services.product.host}") String resourceHost, RestTemplate restTemplate) {
+    public ProductClient(@Value("${services.product.host}") String resourceHost,
+                         @Value("${services.product.client-link-host}") String resourceClientLinkHost,
+                         RestTemplate restTemplate) {
         this.resourceUrl = "http://" + resourceHost + resourcePath;
+        this.resourceClientUrl = "http://" + resourceClientLinkHost + resourcePath;
         this.restTemplate = restTemplate;
     }
 
     public String getResourceUrl() {
-        return resourceUrl;
+        return resourceClientUrl;
     }
 
     public ProductDto findById(String productId) {
