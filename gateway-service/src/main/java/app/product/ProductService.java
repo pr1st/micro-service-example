@@ -17,4 +17,10 @@ public class ProductService {
     public List<Link> getLinks() {
         return List.of(Link.of(productClient.getResourceUrl(), "products"));
     }
+
+    public List<ProductDto> getProductsForOrders(List<String> productIds) {
+        return productIds.stream()
+                .map(productClient::findById)
+                .toList();
+    }
 }

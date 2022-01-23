@@ -17,4 +17,8 @@ public class CustomerService {
     public List<Link> getLinks() {
         return List.of(Link.of(customerClient.getResourceUrl(), "customers"));
     }
+
+    public CustomerDto getCustomer(String customerId) {
+        return customerClient.findById(customerId);
+    }
 }

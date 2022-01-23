@@ -1,7 +1,10 @@
 package app.gateway;
 
+import app.customer.CustomerDto;
 import app.customer.CustomerService;
+import app.order.OrderDto;
 import app.order.OrderService;
+import app.product.ProductDto;
 import app.product.ProductService;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
@@ -15,7 +18,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -49,12 +55,20 @@ public class GatewayRestController {
 
     @GetMapping("/v1/orders/")
     public ResponseEntity<?> customerOrderProductsInfo(@RequestParam("client_id") String clientId) {
-            var d = new CustomerOrderInfoDto("1",
-                    List.of(new CustomerOrderInfoDto.OrderInfo("1", "2", "3"),
-                            new CustomerOrderInfoDto.OrderInfo("2", "6", "4"))
-            );
-        var of = EntityModel.of(d);
-        of.add(Link.of("123", "2"));
-        return ResponseEntity.ok(d);
+        var customer = customerService.getCustomer(clientId);
+        var orders = orderService.getOrdersFromCustomer(clientId);
+        var products = productService.getProductsForOrders(orders.stream().map(OrderDto::productId).toList());
+        var orderInfoList = orders.stream()
+                .map(o -> products.stream()
+                        .filter(p -> p.id().equals(o.productId()))
+                        .findAny()
+                        .map(p -> new CustomerOrderInfoDto.OrderInfo(o.id(), p.id(), p.title()))
+                        .orElse(null)
+                ).filter(Objects::nonNull)
+                .toList();
+        var customerOrderInfoDto = new CustomerOrderInfoDto(customer.name(), orderInfoList);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(customerOrderInfoDto);
     }
 }
