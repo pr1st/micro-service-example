@@ -33,6 +33,7 @@ function fetchProductsTable() {
     .done((data, status) => {
         console.log({"status": status, "data": data})
         products = data
+        fetchOrdersTable()
         renderProductTable()
     })
     .fail(err => {

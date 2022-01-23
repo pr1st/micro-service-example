@@ -18,7 +18,7 @@ function fetchActions() {
 
         fetchCustomersTable()
         fetchProductsTable()
-        fetchOrdersTable()
+
 
         delete links["customers"]
         delete links["orders"]

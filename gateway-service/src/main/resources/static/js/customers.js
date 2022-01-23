@@ -33,6 +33,7 @@ function fetchCustomersTable() {
     .done((data, status) => {
         console.log({"status": status, "data": data})
         customers = data
+        fetchOrdersTable()
         renderCustomerTable()
     })
     .fail(err => {
