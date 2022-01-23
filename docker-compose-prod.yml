@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  #gateway
+  gateway:
+    image: pr1st/micro-service-example:gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - order-service
+      - customer-service
+      - product-service
+  # order
+  order-service:
+    image: pr1st/micro-service-example:order-service
+    ports:
+      - "8001:8080"
+    depends_on:
+      - postgres-order-db
+  postgres-order-db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=orders
+  # customer
+  customer-service:
+    image: pr1st/micro-service-example:customer-service
+    ports:
+      - "8002:8080"
+    depends_on:
+      - redis-customer-db
+  redis-customer-db:
+    image: redis
+  # product
+  product-service:
+    image: pr1st/micro-service-example:product-service
+    ports:
+      - "8003:8080"
+    depends_on:
+      - redis-product-db
+  redis-product-db:
+    image: redis
